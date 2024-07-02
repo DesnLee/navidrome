@@ -19,6 +19,9 @@ import (
 type configOptions struct {
 	ConfigFile                   string
 	Address                      string
+	Token                        string
+	ServerId                     string
+	FreezePrefix                 string
 	Port                         int
 	UnixSocketPerm               string
 	MusicFolder                  string

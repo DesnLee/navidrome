@@ -254,6 +254,14 @@ func (r *userRepository) Delete(id string) error {
 	return err
 }
 
+func (r *userRepository) DeleteUser(id string) error {
+	err := r.delete(Eq{"id": id})
+	if errors.Is(err, model.ErrNotFound) {
+		return rest.ErrNotFound
+	}
+	return err
+}
+
 func keyTo32Bytes(input string) []byte {
 	data := sha256.Sum256([]byte(input))
 	return data[0:]
