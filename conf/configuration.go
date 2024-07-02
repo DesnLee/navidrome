@@ -20,9 +20,15 @@ import (
 )
 
 type configOptions struct {
-	ConfigFile                      string
-	Address                         string
-	Port                            int
+	ConfigFile string
+	Address    string
+	Port       int
+
+	// Emby compatibility
+	Token        string
+	ServerId     string
+	FreezePrefix string
+
 	UnixSocketPerm                  string
 	MusicFolder                     string
 	DataFolder                      string

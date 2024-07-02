@@ -40,6 +40,7 @@ func New(ds model.DataStore, broker events.Broker, insights metrics.Insights) *S
 	initialSetup(ds)
 	auth.Init(s.ds)
 	s.initRoutes()
+	s.mountEmbyCompatibleRoutes()
 	s.mountAuthenticationRoutes()
 	s.mountRootRedirector()
 	checkFFmpegInstallation()
@@ -209,6 +210,32 @@ func (s *Server) mountAuthenticationRoutes() chi.Router {
 			r.Post("/login", login(s.ds))
 		}
 		r.Post("/createAdmin", createAdmin(s.ds))
+	})
+}
+
+// Emby compatible routes
+func (s *Server) mountEmbyCompatibleRoutes() chi.Router {
+	r := s.router
+	return r.Route(path.Join(conf.Server.BasePath, "/emby"), func(r chi.Router) {
+		log.Info("Start register Emby compatible routes...")
+		r.Use(embyAuthenticator)
+
+		// create user
+		r.Post("/Users/New", createEmbyUser(s.ds))
+		// login
+		r.Post("/Users/authenticatebyname", loginEmbyUser(s.ds))
+		// get all user
+		r.Get("/Users", getEmbyUsers(s.ds))
+		// set password
+		r.Post("/Users/{id}/Password", setUserPassword(s.ds))
+		// set policy
+		r.Post("/Users/{id}/Policy", setUserPolicy(s.ds))
+		// delete user
+		r.Delete("/Users/{id}", deleteEmbyUser(s.ds))
+		// get sessions
+		r.Get("/Sessions", getEmbySessions)
+
+		log.Info("Register Emby compatible routes successfully!")
 	})
 }
 

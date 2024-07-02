@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID           string     `structs:"id" json:"id"`
@@ -27,7 +29,9 @@ type Users []User
 type UserRepository interface {
 	CountAll(...QueryOptions) (int64, error)
 	Get(id string) (*User, error)
+	GetAll(options ...QueryOptions) (Users, error)
 	Put(*User) error
+	DeleteUser(id string) error
 	UpdateLastLoginAt(id string) error
 	UpdateLastAccessAt(id string) error
 	FindFirstAdmin() (*User, error)
